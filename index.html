@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>公众号 · 关注我们</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: #f2f2f5;
+    color: #1a1a1a;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 36px 28px 28px;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,.06);
+  }
+  .avatar {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    background: #07C160;
+    color: #fff;
+    font-size: 30px;
+    font-weight: 500;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 16px;
+  }
+  h1 { font-size: 20px; font-weight: 500; line-height: 1.4; }
+  .desc { font-size: 14px; color: #7a7a7a; line-height: 1.6; margin-top: 8px; }
+  .qrbox {
+    margin: 24px auto 16px;
+    width: 208px; height: 208px;
+    padding: 8px;
+    border: 1px solid #ececec;
+    border-radius: 14px;
+  }
+  .qrbox img { width: 100%; height: 100%; display: block; }
+  .hint { font-size: 15px; font-weight: 500; color: #1a1a1a; }
+  .sub { font-size: 12px; color: #9a9a9a; margin-top: 6px; line-height: 1.6; }
+  .btn {
+    display: block;
+    margin-top: 20px;
+    padding: 13px;
+    border-radius: 12px;
+    background: #07C160;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    width: 100%;
+    font-family: inherit;
+    transition: opacity .15s;
+  }
+  .btn:active { opacity: .8; }
+  .btn.ghost {
+    background: #f5f5f5;
+    color: #07C160;
+    margin-top: 10px;
+    font-weight: 400;
+  }
+  .foot { font-size: 12px; color: #b0b0b0; margin-top: 18px; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="avatar">号</div>
+    <h1>你的公众号名称</h1>
+    <p class="desc">这里放一句简介，控制在 20 字以内，说清你是谁、能提供什么</p>
+
+    <div class="qrbox">
+      <img src="qrcode.png" alt="公众号二维码">
+    </div>
+
+    <p class="hint" id="hint">长按识别二维码 · 关注公众号</p>
+    <p class="sub" id="sub">微信外无法直接打开主页，扫码或复制链接即可</p>
+
+    <button class="btn" id="copyBtn">复制主页链接</button>
+    <button class="btn ghost" id="goBtn">在微信中打开主页</button>
+
+    <p class="foot">复制链接后粘贴到任意微信聊天窗口，点击即可直达</p>
+  </div>
+
+<script>
+  var HOME = "https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzY5NzIxMTE3Nw%3D%3D&scene=124";
+  var inWeChat = /MicroMessenger/i.test(navigator.userAgent);
+
+  if (inWeChat) {
+    document.getElementById("hint").textContent = "正在跳转公众号主页…";
+    document.getElementById("sub").textContent = "即将离开当前页面";
+    setTimeout(function () { location.replace(HOME); }, 400);
+  }
+
+  document.getElementById("goBtn").onclick = function () {
+    location.href = HOME;
+  };
+
+  document.getElementById("copyBtn").onclick = function () {
+    var btn = this;
+    var done = function () {
+      btn.textContent = "已复制，去微信粘贴打开";
+      setTimeout(function () { btn.textContent = "复制主页链接"; }, 2400);
+    };
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(HOME).then(done, fallback);
+    } else {
+      fallback();
+    }
+    function fallback() {
+      var ta = document.createElement("textarea");
+      ta.value = HOME;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand("copy"); done(); } catch (e) { btn.textContent = "复制失败，请手动长按链接"; }
+      document.body.removeChild(ta);
+    }
+  };
+</script>
+</body>
+</html>
